@@ -1,5 +1,5 @@
 global.appType = "StreamAMGApp";
-global.version = "1.1.0";
+global.version = "1.2.0";
 global.port = 0;
 
 const fs = require('fs');
@@ -55,8 +55,7 @@ if (process.argv.indexOf("-noPersistence") != -1){
     }
 }
 if (!global.noPersistence){
-	Logger.log("Persistence not yet implemented - defaulting to 'no persistence' mode", "FgRed");
-	global.noPersistence = true;
+	Logger.log("Persistence enabled", "FgGreen");
 }
 
 let validKeys = [
@@ -87,6 +86,7 @@ let allowedOrigins = null;
 if (properties.get('cors.allowed.origins')){
 	allowedOrigins = properties.get('main.allowed.origin.file').split(',');
 };
+global.mongoBaseURL = properties.get('mongo.base.url');
 let homepageText = properties.get('page.home.text') + version;
 
 
@@ -157,6 +157,14 @@ app.get('/metadata/:id', function (req, res) {
 
 // POST metadata
 app.post('/metadata', function (req, res) {
+	if (overflowDetected(req, res)){
+		return;
+	}
+
+	if (debugMode) {
+		Logger.log("[Debug] POST /metadata request");
+	}
+
 	let item = req.body;
 	if (!item){
 		if (debugMode) {
@@ -210,7 +218,7 @@ app.post('/metadata/:id', function (req, res) {
 	}
 
 	if (debugMode) {
-		Logger.log("[Debug] POST /metadata request");
+		Logger.log("[Debug] POST /metadata/:id request");
 	}
 
 	let id = req.params.id;
@@ -218,7 +226,7 @@ app.post('/metadata/:id', function (req, res) {
 	let item = req.body;
 	if (!item){
 		if (debugMode) {
-			Logger.log("[Debug] Missing metadata in POST /metadata attempt");
+			Logger.log("[Debug] Missing metadata in POST /metadata/:id attempt");
 		}
 		res.status(400).send("Missing metadata");
 		return;

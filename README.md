@@ -5,6 +5,10 @@
 
 Application architecture for managing metadata
 
+## Prerequisites
+
+If you intend to run the applications with persistence enabled, you will need a local instance of MongoDB, running on port 27017. If you have one running on a different port, or in a different location, this can be set in the config.ini file
+
 ## How To Install
 
 	./deploy.sh
@@ -18,6 +22,10 @@ No mandatory configuration needed. The config.ini of each component can be tweak
 This runs all applications in "no persistence" mode, which starts with a completely fresh (ie. empty) data set, to ensure consistency of testing - and also protects against destructive changes to persistent data
 
 	./start.sh noPersistence
+
+To start all applications with persistence enabled, use the following
+
+	./start.sh
 
 ## How To Stop
 
@@ -43,7 +51,9 @@ For ease of demonstrating functionality, and promoting a rapid local development
 
 The main StreamAMGApp could be deployed in an EC2 container, or multiple instances, according to the number of requests being handled, all managed by a load balancer
 
-Alternatively, the functionality contained within could be broken down into individual Lambda functions, although careful consideration of how this would affect the development lifecycle would need to be given
+Alternatively, the functionality contained within could be broken down into individual Lambda functions, although careful consideration of how this would affect the development lifecycle would need to be given. This would be a tidy solution in terms of scalability though
+
+With regards to the scalability of the other components in the architecture, we can take advantage of the autoscaling of Mongo, Redis etc. in AWS
 
 
 ## Notes
@@ -51,3 +61,7 @@ Alternatively, the functionality contained within could be broken down into indi
 The reason for choosing Node.js as the tech for this task is the speed at which prototypes can be rapidly spun up. Also, the number of instances of Node.js apps that can be run simultaneously on any given laptop is very high, which is crucial when trying to produce a proof of concept for a potentially large architecture
 
 The reason for skipping the more basic unit tests within the Node.js application at this point, and going straight to automated testing with an external application, is that it guarantees consistent testing against an API that is likely to be refactored or removed entirely in favour of a different tech. Also, running tests externally makes more sense when testing an entire architecture
+
+The choice of MongoDB was for its flexibility in storing and handling data of varying sizes (eg. holding arrays of all different sizes in the categories field), and also its availability on multiple cloud platforms
+
+Note also that I have not Dockerised any of the architecture because, from a speed-of-development perspective, it's preferred at this stage to be able to run and re-run things immediately

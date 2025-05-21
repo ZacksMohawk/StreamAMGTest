@@ -1,7 +1,10 @@
+const MongoClient = require('./MongoClient');
 const Logger = require('./Logger');
 
 
 let itemStore = {};
+let dbName = "StreamAMGMetadata";
+let dbTable = "metadata";
 
 
 async function getMaxId(successFunction, failFunction){
@@ -19,6 +22,24 @@ async function getMaxId(successFunction, failFunction){
         successFunction(maxId);
         return;
     }
+    MongoClient.getMaxID(dbName, dbTable,
+    	function(results){
+    		if (results.length == 0){
+    			// empty table, so set this value to zero
+    			successFunction(0);
+    		}
+    		else if (results.length > 1){
+				failFunction(500, "DB ERROR: Multiple results returned for ID");
+			}
+			else {
+				let result = results[0];
+				successFunction(result._id);
+			}
+		},
+		function(error){
+			failFunction(500, "DB ERROR: " + error.message);
+		}
+	);
 }
 
 async function writeMetadata(id, item, successFunction, failFunction){
@@ -27,6 +48,14 @@ async function writeMetadata(id, item, successFunction, failFunction){
         successFunction(id);
         return;
     }
+    MongoClient.writeToDB(dbName, dbTable, {"_id" : id}, item,
+		function(){
+			successFunction(id);
+		},
+		function(error){
+			failFunction(500, "DB ERROR: " + error.message);
+		}
+	);
 }
 
 async function fetchMetadata(id, successFunction, failFunction){
@@ -40,6 +69,23 @@ async function fetchMetadata(id, successFunction, failFunction){
     	}
         return;
     }
+    MongoClient.fetchFromDB(dbName, dbTable, {"_id" : parseInt(id)},
+		function(results){
+			if (results.length == 0){
+				failFunction(404, "NOT FOUND");
+			}
+			else if (results.length > 1){
+				failFunction(500, "DB ERROR: Multiple results returned for ID");
+			}
+			else {
+				let item = results[0];
+				successFunction(item);
+			}
+		},
+		function(error){
+			failFunction(500, "DB ERROR: " + error.message);
+		}
+	);
 }
 
 async function deleteMetadata(id, successFunction, failFunction){
@@ -47,13 +93,36 @@ async function deleteMetadata(id, successFunction, failFunction){
         let item = itemStore[id];
     	if (item){
     		delete itemStore[id];
-    		successFunction(item);
+    		successFunction();
     	}
     	else {
     		failFunction(404, "NOT FOUND");
     	}
         return;
     }
+    MongoClient.fetchFromDB(dbName, dbTable, {"_id" : parseInt(id)},
+		function(results){
+			if (results.length == 0){
+				failFunction(404, "NOT FOUND");
+			}
+			else if (results.length > 1){
+				failFunction(500, "DB ERROR: Multiple results returned for ID");
+			}
+			else {
+				MongoClient.deleteFromDB(dbName, dbTable, {"_id" : parseInt(id)},
+					function(){
+						successFunction();
+					},
+					function(error){
+						failFunction(500).send("DB ERROR: " + error.message);
+					}
+				);
+			}
+		},
+		function(error){
+			failFunction(500, "DB ERROR: " + error.message);
+		}
+	);
 }
 
 
