@@ -1,5 +1,5 @@
 global.appType = "StreamAMGApp";
-global.version = "1.0.0";
+global.version = "1.1.0";
 global.port = 0;
 
 const fs = require('fs');
@@ -58,6 +58,13 @@ if (!global.noPersistence){
 	Logger.log("Persistence not yet implemented - defaulting to 'no persistence' mode", "FgRed");
 	global.noPersistence = true;
 }
+
+let validKeys = [
+	'title',
+	'description',
+	'duration',
+	'categories'
+];
 
 // properties
 let properties = PropertiesReader(configPath);
@@ -162,6 +169,7 @@ app.post('/metadata', function (req, res) {
 	authenticate(req, res,
 		function(){
 			validate(req, res, item, 
+				// successFunction
 				function(){
 					DataClient.getMaxId(
 						// successFunction
@@ -184,6 +192,11 @@ app.post('/metadata', function (req, res) {
 							res.status(errorCode).send(errorMessage);
 						}
 					);
+				},
+				// failFunction
+				function(errorCode, errorMessage){
+					Logger.error("VALIDATION ERROR: " + errorMessage);
+					res.status(errorCode).send(errorMessage);
 				}
 			);
 		}
@@ -214,6 +227,7 @@ app.post('/metadata/:id', function (req, res) {
 	authenticate(req, res,
 		function(){
 			validate(req, res, item, 
+				// successFunction
 				function(){
 					DataClient.writeMetadata(id, item,
 						// successFunction
@@ -226,6 +240,11 @@ app.post('/metadata/:id', function (req, res) {
 							res.status(errorCode).send(errorMessage);
 						}
 					);
+				},
+				// failFunction
+				function(errorCode, errorMessage){
+					Logger.error("VALIDATION ERROR: " + errorMessage);
+					res.status(errorCode).send(errorMessage);
 				}
 			);
 		}
@@ -281,8 +300,15 @@ function authenticate(req, res, successFunction){
 	successFunction();
 }
 
-function validate(req, res, item, successFunction){
-	// TODO Implement proper validation here
+function validate(req, res, item, successFunction, failFunction){
+	let keys = Object.keys(item);
+	for (let index = 0; index < keys.length; index++){
+		let key = keys[index];
+		if (!validKeys.includes(key)){
+			failFunction(400, "Invalid key: " + key);
+			return;
+		}
+	}
 	successFunction();
 }
 
