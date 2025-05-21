@@ -11,7 +11,7 @@ describe("StreamAMGApp API Testing", () => {
 			.get("/")
 			.end((err, response) => {
 				response.should.have.status(200);
-				response.text.should.be.eql('StreamAMGApp v1.0.0');
+				response.text.should.be.eql('StreamAMGApp v1.3.0');
 				done();
 			});
 	});

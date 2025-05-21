@@ -10,7 +10,7 @@
 				"expected" : {
 					"code" : 200,
 					"type" : "text",
-					"content" : "StreamAMGApp v1.2.0"
+					"content" : "StreamAMGApp v1.3.0"
 				},
 				"nfr" : {
 					"maxResponseTime" : 200

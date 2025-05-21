@@ -1,10 +1,21 @@
 const MongoClient = require('./MongoClient');
+const redis = require('redis');
+const redisClient = redis.createClient({legacyMode: true});
 const Logger = require('./Logger');
 
 
 let itemStore = {};
 let dbName = "StreamAMGMetadata";
 let dbTable = "metadata";
+
+let oneDayInSeconds = 86400;
+let clientReady = false;
+redisClient.on('connect', function(){
+	clientReady = true;
+	Logger.log('Redis Client Connected');
+	Logger.log('');
+});
+redisClient.connect();
 
 
 async function getMaxId(successFunction, failFunction){
@@ -50,7 +61,18 @@ async function writeMetadata(id, item, successFunction, failFunction){
     }
     MongoClient.writeToDB(dbName, dbTable, {"_id" : parseInt(id)}, item,
 		function(){
-			successFunction(id);
+			if (!global.redisCacheEnabled){
+				successFunction(id);
+				return;
+			}
+			let key = "StreamAMG-metadata-" + id;
+			redisClient.set(key, JSON.stringify(item), function(err, setReply){
+				if (debugMode){
+					Logger.log("Successfully cached metadata for '" + id + "' in Redis");
+				}
+				redisClient.expire(key, oneDayInSeconds);
+				successFunction(id);
+			});
 		},
 		function(error){
 			failFunction(500, "DB ERROR: " + error.message);
@@ -69,7 +91,39 @@ async function fetchMetadata(id, successFunction, failFunction){
     	}
         return;
     }
-    MongoClient.fetchFromDB(dbName, dbTable, {"_id" : parseInt(id)},
+
+    if (!global.redisCacheEnabled){
+    	if (debugMode){
+			Logger.log("Redis cache disabled. Checking DB...");
+		}
+    	fetchMetadataFromDB(id, successFunction, failFunction);
+    	return;
+    }
+
+    let key = "StreamAMG-metadata-" + id;
+	redisClient.get(key, function(err, reply){
+		if (err){
+			Logger.log(err);
+		}
+		else if (!reply){
+			if (debugMode){
+				Logger.log("Could not find metadata for '" + id + "' in Redis. Checking DB...");
+			}
+			fetchMetadataFromDB(id, successFunction, failFunction);
+		}
+		else {
+			if (debugMode){
+				Logger.log("Found metadata for '" + id + "' in Redis");
+			}
+
+			let item = JSON.parse(reply);
+			successFunction(item);
+		}
+	});
+}
+
+function fetchMetadataFromDB(id, successFunction, failFunction){
+	MongoClient.fetchFromDB(dbName, dbTable, {"_id" : parseInt(id)},
 		function(results){
 			if (results.length == 0){
 				failFunction(404, "NOT FOUND");
@@ -112,10 +166,20 @@ async function deleteMetadata(id, successFunction, failFunction){
 			else {
 				MongoClient.deleteFromDB(dbName, dbTable, {"_id" : parseInt(id)},
 					function(){
-						successFunction();
+						if (!global.redisCacheEnabled){
+							successFunction(id);
+							return;
+						}
+						let key = "StreamAMG-metadata-" + id;
+						redisClient.del(key, function(err, setReply){
+							if (debugMode){
+								Logger.log("Successfully removed cached metadata for '" + id + "' from Redis");
+							}
+							successFunction();
+						});
 					},
 					function(error){
-						failFunction(500).send("DB ERROR: " + error.message);
+						failFunction(500, "DB ERROR: " + error.message);
 					}
 				);
 			}

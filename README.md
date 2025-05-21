@@ -7,7 +7,7 @@ Application architecture for managing metadata
 
 ## Prerequisites
 
-If you intend to run the applications with persistence enabled, you will need a local instance of MongoDB, running on port 27017. If you have one running on a different port, or in a different location, this can be set in the config.ini file
+If you intend to run the applications with persistence enabled, you will need a local instance of MongoDB, running on port 27017. If you have one running on a different port, or in a different location, this can be set in the config.ini file. You will also need a local instance of Redis running (if caching is enabled in config.ini)
 
 ## How To Install
 
@@ -65,3 +65,5 @@ The reason for skipping the more basic unit tests within the Node.js application
 The choice of MongoDB was for its flexibility in storing and handling data of varying sizes (eg. holding arrays of all different sizes in the categories field), and also its availability on multiple cloud platforms
 
 Note also that I have not Dockerised any of the architecture because, from a speed-of-development perspective, it's preferred at this stage to be able to run and re-run things immediately
+
+In the config.ini of StreamAMGApp, the Redis caching can be toggled on/off, so that performance gains during load testing can be measured

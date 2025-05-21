@@ -1,5 +1,5 @@
 global.appType = "StreamAMGApp";
-global.version = "1.2.0";
+global.version = "1.3.0";
 global.port = 0;
 
 const fs = require('fs');
@@ -87,6 +87,7 @@ if (properties.get('cors.allowed.origins')){
 	allowedOrigins = properties.get('main.allowed.origin.file').split(',');
 };
 global.mongoBaseURL = properties.get('mongo.base.url');
+global.redisCacheEnabled = properties.get('redis.cache.enabled');
 let homepageText = properties.get('page.home.text') + version;
 
 
