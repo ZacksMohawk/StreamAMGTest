@@ -53,10 +53,10 @@ if (process.argv.indexOf("-noPersistence") != -1){
     if (global.noPersistence){
     	Logger.log("Using 'no persistence' mode (for local dev and test)", "FgRed");
     }
-    else {
-    	Logger.log("Persistence not yet implemented - defaulting to 'no persistence' mode", "FgRed");
-    	global.noPersistence = true;
-    }
+}
+if (!global.noPersistence){
+	Logger.log("Persistence not yet implemented - defaulting to 'no persistence' mode", "FgRed");
+	global.noPersistence = true;
 }
 
 // properties
