@@ -1,0 +1,21 @@
+{
+  "name": "streamamgapp",
+  "version": "1.0.0",
+  "main": "StreamAMGApp.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "chai": "^4.2.0",
+    "request": "^2.88.2"
+  },
+  "dependencies": {
+    "chai-http": "^4.4.0"
+  },
+  "description": ""
+}

@@ -1,0 +1,178 @@
+{
+	"StreamAMGTest local testing" : {
+		"useSSL" : false,
+		"confirm" : "Please ensure 'no persistence' mode is activated by starting the application(s) with: ./start.sh noPersistence",
+		"tests" : [
+			{
+				"title" : "Homepage Test",
+				"type" : "GET",
+				"url" : "localhost:3000",
+				"expected" : {
+					"code" : 200,
+					"type" : "text",
+					"content" : "StreamAMGApp v1.0.0"
+				},
+				"nfr" : {
+					"maxResponseTime" : 200
+				}
+			},
+			{
+				"title" : "Get Item With No ID Test",
+				"type" : "GET",
+				"url" : "localhost:3000/metadata",
+				"expected" : {
+					"code" : 400,
+					"type" : "text",
+					"content" : "Please provide ID in path"
+				},
+				"nfr" : {
+					"maxResponseTime" : 200
+				}
+			},
+			{
+				"title" : "Create Item Test",
+				"type" : "POST",
+				"url" : "localhost:3000/metadata",
+				"body" : {
+				    "title" : "test",
+				    "description" : "test description",
+				    "duration" : "test duration",
+				    "categories" : [
+				        "category1",
+				        "category2",
+				        "category3"
+				    ]    
+				},
+				"expected" : {
+					"code" : 200,
+					"type" : "json"
+				},
+				"responseValues" : {
+					"id" : "id1"
+				},
+				"nfr" : {
+					"maxResponseTime" : 200
+				}
+			},
+			{
+				"title" : "Get Item Test",
+				"type" : "GET",
+				"url" : "localhost:3000/metadata/<id1>",
+				"expected" : {
+					"code" : 200,
+					"type" : "json",
+					"content" : {
+					    "title" : "test",
+					    "description" : "test description",
+					    "duration" : "test duration",
+					    "categories" : [
+					        "category1",
+					        "category2",
+					        "category3"
+					    ]    
+					}
+				},
+				"nfr" : {
+					"maxResponseTime" : 200
+				}
+			},
+			{
+				"title" : "Update Item Test",
+				"type" : "POST",
+				"url" : "localhost:3000/metadata/<id1>",
+				"body" : {
+				    "title" : "test2",
+				    "description" : "test description 2",
+				    "duration" : "test duration 2",
+				    "categories" : [
+				        "category4",
+				        "category5",
+				        "category6"
+				    ]    
+				},
+				"expected" : {
+					"code" : 200,
+					"type" : "text",
+					"content" : "UPDATE SUCCESSFUL"
+				},
+				"nfr" : {
+					"maxResponseTime" : 200
+				}
+			},
+			{
+				"title" : "Get Updated Item Test",
+				"type" : "GET",
+				"url" : "localhost:3000/metadata/<id1>",
+				"expected" : {
+					"code" : 200,
+					"type" : "json",
+					"content" : {
+					    "title" : "test2",
+					    "description" : "test description 2",
+					    "duration" : "test duration 2",
+					    "categories" : [
+					        "category4",
+					        "category5",
+					        "category6"
+					    ]    
+					}
+				},
+				"nfr" : {
+					"maxResponseTime" : 200
+				}
+			},
+			{
+				"title" : "Delete Item With No ID Test",
+				"type" : "DELETE",
+				"url" : "localhost:3000/metadata",
+				"expected" : {
+					"code" : 400,
+					"type" : "text",
+					"content" : "Please provide ID in path"
+				},
+				"nfr" : {
+					"maxResponseTime" : 200
+				}
+			},
+			{
+				"title" : "Delete Item Test",
+				"type" : "DELETE",
+				"url" : "localhost:3000/metadata/<id1>",
+				"expected" : {
+					"code" : 200,
+					"type" : "text",
+					"content" : "DELETE SUCCESSFUL"
+				},
+				"nfr" : {
+					"maxResponseTime" : 200
+				}
+			},
+			{
+				"title" : "Get Deleted/Nonexistent Item Test",
+				"type" : "GET",
+				"url" : "localhost:3000/metadata/<id1>",
+				"expected" : {
+					"code" : 404,
+					"type" : "text",
+					"content" : "NOT FOUND"
+				},
+				"nfr" : {
+					"maxResponseTime" : 200
+				}
+			},
+			{
+				"title" : "Deleted Nonexistent Item Test",
+				"type" : "DELETE",
+				"url" : "localhost:3000/metadata/<id1>",
+				"expected" : {
+					"code" : 404,
+					"type" : "text",
+					"content" : "NOT FOUND"
+				},
+				"nfr" : {
+					"maxResponseTime" : 200
+				}
+			}
+		]
+	}
+}
