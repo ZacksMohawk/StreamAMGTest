@@ -48,7 +48,7 @@ async function writeMetadata(id, item, successFunction, failFunction){
         successFunction(id);
         return;
     }
-    MongoClient.writeToDB(dbName, dbTable, {"_id" : id}, item,
+    MongoClient.writeToDB(dbName, dbTable, {"_id" : parseInt(id)}, item,
 		function(){
 			successFunction(id);
 		},
@@ -79,6 +79,7 @@ async function fetchMetadata(id, successFunction, failFunction){
 			}
 			else {
 				let item = results[0];
+				delete item._id;
 				successFunction(item);
 			}
 		},
