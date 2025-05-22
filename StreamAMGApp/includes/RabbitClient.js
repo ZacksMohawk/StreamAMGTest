@@ -4,7 +4,7 @@ const amqp = require('amqplib/callback_api');
 const queue = 'metadata';
 
 function sendMessage(message){
-    amqp.connect('amqp://localhost', function(error0, connection) {
+    amqp.connect(global.rabbitUrl, function(error0, connection) {
         if (error0) {
             throw error0;
         }

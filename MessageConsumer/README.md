@@ -1,9 +1,9 @@
 # StreamAMG
-## StreamAMGApp
+## MessageConsumer
 
 ## Overview
 
-Application for handling creation, editing, retrieval and deletion of metadata JSON objects
+Basic example of a message queue consumer application
 
 NOTE: No need to install or run this individually - please use the deploy.sh, start.sh and stop.sh scripts in root folder
 
@@ -17,13 +17,7 @@ No configuration required.
 
 ## How To Run
 
-This runs the application in "no persistence" mode, which starts with a completely fresh (ie. empty) data set, to ensure consistency of testing - and also protects against destructive changes to persistent data
-
-	node StreamAMGApp -noPersistence true
-
-To run with persistence enabled, use the following
-
-	node StreamAMGApp
+	node MessageConsumer
 
 ## How To Stop
 

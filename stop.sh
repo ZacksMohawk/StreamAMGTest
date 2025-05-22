@@ -4,4 +4,7 @@
 echo ==========[STOPPING STREAMAMGTEST]==========
 
 #StreamAMGApp
-pkill -f StreamAMGApp
+pkill -f StreamAMGApp.js
+
+#MessageConsumer
+pkill -f MessageConsumer.js

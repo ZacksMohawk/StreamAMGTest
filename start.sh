@@ -10,3 +10,7 @@ if [ "$1" = noPersistence ] ; then
 else
 	node StreamAMGApp.js -port 3000 &
 fi
+
+#MessageConsumer
+cd ../MessageConsumer
+node MessageConsumer.js -port 4000 &

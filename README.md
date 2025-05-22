@@ -41,6 +41,8 @@ You will need to install TestNet (https://github.com/ZacksMohawk/TestNet). Pleas
 
 This will give you the option to run the tests. Please make sure you are running the application(s) in "no persistence" mode - as outlined above - before continuing with the tests
 
+There is also a Postman collection in the root folder of this repo, allowing you to play around with the API endpoints manually
+
 
 
 ## Architecture
@@ -67,3 +69,7 @@ The choice of MongoDB was for its flexibility in storing and handling data of va
 Note also that I have not Dockerised any of the architecture because, from a speed-of-development perspective, it's preferred at this stage to be able to run and re-run things immediately
 
 In the config.ini of StreamAMGApp, the Redis caching can be toggled on/off, so that performance gains during load testing can be measured
+
+To observe that messages are being consumed by MessageConsumer application, view the log MessageConsumer.log, or tail it in realtime:
+
+	tail -f MessageConsumer/MessageConsumer.log

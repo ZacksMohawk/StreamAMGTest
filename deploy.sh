@@ -7,3 +7,8 @@ echo ==========[DEPLOYING STREAMAMGTEST]==========
 cd StreamAMGApp
 npm install
 npm audit fix
+
+#MessageConsumer
+cd MessageConsumer
+npm install
+npm audit fix

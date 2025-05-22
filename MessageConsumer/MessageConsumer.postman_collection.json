@@ -1,0 +1,26 @@
+{
+	"info": {
+		"_postman_id": "f0aa850f-fd0c-41cf-81fe-ee3fb5e6fa68",
+		"name": "MessageConsumer",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "36158434"
+	},
+	"item": [
+		{
+			"name": "/",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:4000",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "4000"
+				}
+			},
+			"response": []
+		}
+	]
+}

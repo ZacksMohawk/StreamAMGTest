@@ -1,7 +1,7 @@
 {
 	"StreamAMGTest local testing" : {
 		"useSSL" : false,
-		"confirm" : "Please ensure 'no persistence' mode is activated by starting the application(s) with: ./start.sh noPersistence",
+		"confirm" : "If you do not wish to make destructive DB changes with these tests, please ensure 'no persistence' mode is activated by starting the application(s) with: ./start.sh noPersistence. Okay to proceed?",
 		"tests" : [
 			{
 				"title" : "Homepage Test",
@@ -10,7 +10,7 @@
 				"expected" : {
 					"code" : 200,
 					"type" : "text",
-					"content" : "StreamAMGApp v1.4.0"
+					"content" : "StreamAMGApp v1.5.0"
 				},
 				"nfr" : {
 					"maxResponseTime" : 200
