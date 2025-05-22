@@ -1,5 +1,5 @@
 global.appType = "StreamAMGApp";
-global.version = "1.3.0";
+global.version = "1.4.0";
 global.port = 0;
 
 const fs = require('fs');
@@ -64,6 +64,10 @@ let validKeys = [
 	'duration',
 	'categories'
 ];
+
+const CREATE = "create";
+const MODIFY = "modify";
+const DELETE = "delete";
 
 // properties
 let properties = PropertiesReader(configPath);
@@ -183,7 +187,7 @@ app.post('/metadata', function (req, res) {
 					DataClient.getMaxId(
 						// successFunction
 						function(maxId){
-							DataClient.writeMetadata(maxId + 1, item,
+							DataClient.writeMetadata(maxId + 1, CREATE, item,
 								// successFunction
 								function(id){
 									res.status(200).send({"id" : id});
@@ -238,7 +242,7 @@ app.post('/metadata/:id', function (req, res) {
 			validate(req, res, item, 
 				// successFunction
 				function(){
-					DataClient.writeMetadata(id, item,
+					DataClient.writeMetadata(id, MODIFY, item,
 						// successFunction
 						function(){
 							res.status(200).send("UPDATE SUCCESSFUL");
@@ -275,7 +279,7 @@ app.delete('/metadata/:id', function (req, res) {
 
 	authenticate(req, res,
 		function(){
-			DataClient.deleteMetadata(id,
+			DataClient.deleteMetadata(id, DELETE, 
 				// successFunction
 				function(){
 					res.status(200).send("DELETE SUCCESSFUL");

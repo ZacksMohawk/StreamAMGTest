@@ -1,6 +1,7 @@
 const MongoClient = require('./MongoClient');
 const redis = require('redis');
 const redisClient = redis.createClient({legacyMode: true});
+const RabbitClient = require('./RabbitClient');
 const Logger = require('./Logger');
 
 
@@ -53,7 +54,7 @@ async function getMaxId(successFunction, failFunction){
 	);
 }
 
-async function writeMetadata(id, item, successFunction, failFunction){
+async function writeMetadata(id, action, item, successFunction, failFunction){
     if (global.noPersistence){
     	itemStore[id] = item;
         successFunction(id);
@@ -62,6 +63,7 @@ async function writeMetadata(id, item, successFunction, failFunction){
     MongoClient.writeToDB(dbName, dbTable, {"_id" : parseInt(id)}, item,
 		function(){
 			if (!global.redisCacheEnabled){
+				sendMessage(id, action, item);
 				successFunction(id);
 				return;
 			}
@@ -71,6 +73,8 @@ async function writeMetadata(id, item, successFunction, failFunction){
 					Logger.log("Successfully cached metadata for '" + id + "' in Redis");
 				}
 				redisClient.expire(key, oneDayInSeconds);
+
+				sendMessage(id, action, item);
 				successFunction(id);
 			});
 		},
@@ -78,6 +82,17 @@ async function writeMetadata(id, item, successFunction, failFunction){
 			failFunction(500, "DB ERROR: " + error.message);
 		}
 	);
+}
+
+function sendMessage(id, action, item){
+	let messageObject = {
+		"id" : id,
+		"action" : action
+	};
+	if (item){
+		messageObject.item = item;
+	}
+	RabbitClient.sendMessage(JSON.stringify(messageObject));
 }
 
 async function fetchMetadata(id, successFunction, failFunction){
@@ -143,7 +158,7 @@ function fetchMetadataFromDB(id, successFunction, failFunction){
 	);
 }
 
-async function deleteMetadata(id, successFunction, failFunction){
+async function deleteMetadata(id, action, successFunction, failFunction){
     if (global.noPersistence){
         let item = itemStore[id];
     	if (item){
@@ -167,7 +182,8 @@ async function deleteMetadata(id, successFunction, failFunction){
 				MongoClient.deleteFromDB(dbName, dbTable, {"_id" : parseInt(id)},
 					function(){
 						if (!global.redisCacheEnabled){
-							successFunction(id);
+							sendMessage(id, action);
+							successFunction();
 							return;
 						}
 						let key = "StreamAMG-metadata-" + id;
@@ -175,6 +191,7 @@ async function deleteMetadata(id, successFunction, failFunction){
 							if (debugMode){
 								Logger.log("Successfully removed cached metadata for '" + id + "' from Redis");
 							}
+							sendMessage(id, action);
 							successFunction();
 						});
 					},

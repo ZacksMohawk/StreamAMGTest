@@ -7,7 +7,7 @@ Application architecture for managing metadata
 
 ## Prerequisites
 
-If you intend to run the applications with persistence enabled, you will need a local instance of MongoDB, running on port 27017. If you have one running on a different port, or in a different location, this can be set in the config.ini file. You will also need a local instance of Redis running (if caching is enabled in config.ini)
+If you intend to run the applications with persistence enabled, you will need a local instance of MongoDB, running on port 27017. If you have one running on a different port, or in a different location, this can be set in the config.ini file. You will also need a local instance of Redis running (if caching is enabled in config.ini), and a local instance of RabbitMQ
 
 ## How To Install
 
