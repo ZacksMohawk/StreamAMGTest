@@ -47,15 +47,17 @@ There is also a Postman collection in the root folder of this repo, allowing you
 
 ## Architecture
 
-Please see 'Architecture Diagram' image in the root folder of this repo
+Please see 'Architecture Diagram' image in the root folder of this repo, or view the diagram here: https://insco.pe/?projectID=matty-YtPfYhxOU8Ym83f83otl24tj1wxvIF
 
 For ease of demonstrating functionality, and promoting a rapid local development environment, the deploy.sh script is there to be expanded upon when deployments to the cloud are to be made. In early incarnations of this architecture, perhaps without CI/CD pipelines fully built, this script might include AWS CLI commands for efficient remote deployment
 
 The main StreamAMGApp could be deployed in an EC2 container, or multiple instances, according to the number of requests being handled, all managed by a load balancer
 
-Alternatively, the functionality contained within could be broken down into individual Lambda functions, although careful consideration of how this would affect the development lifecycle would need to be given. This would be a tidy solution in terms of scalability though
+Alternatively, the functionality contained within could be broken down into individual Lambda functions - although careful consideration of how this would affect the development lifecycle would need to be given. This would be a tidy solution in terms of scalability though
 
 With regards to the scalability of the other components in the architecture, we can take advantage of the autoscaling of Mongo, Redis etc. in AWS
+
+Note that my experience of implementing Infrastructure as Code has previously been with the guidance of dedicated DevOps colleagues, when building new architectures, or just routine modification of existing config on my own. This is an area I am happy to own more fully in future
 
 
 ## Notes
@@ -73,3 +75,8 @@ In the config.ini of StreamAMGApp, the Redis caching can be toggled on/off, so t
 To observe that messages are being consumed by MessageConsumer application, view the log MessageConsumer.log, or tail it in realtime:
 
 	tail -f MessageConsumer/MessageConsumer.log
+
+
+## AI Usage
+
+No AI has been used at all in the creation of this work
